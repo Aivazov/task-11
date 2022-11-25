@@ -2,6 +2,7 @@ const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '31522217-1daa00f4dac69c1e930d1cd07';
 let PAGE = 1;
 let inputValue = '';
+let galleryLightBox = new SimpleLightbox('gallery a');
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -23,6 +24,8 @@ refs.searchForm.addEventListener('submit', (e) => {
 
   console.log('inputValue', inputValue);
   fetchPictures(refs.searchInpt.value);
+  galleryLightBox.open();
+
   refs.searchInpt.value = '';
   refs.gallery.innerHTML = '';
 });
@@ -54,29 +57,31 @@ function renderImages(data) {
 
     const markup = `
       <div class="photo-card">
-      <img src="${response.webformatURL}" alt="" loading="lazy" />
+      <a href="${response.largeImageURL}">
+        <img src="${response.webformatURL}" alt="" loading="lazy" />
+      </a>
       <div class="info">
         <p class="info-item">
           <b>Likes</b>
-          <b>${response.likes}</b>
+          <span>${response.likes}</span>
         </p>
         <p class="info-item">
           <b>Views</b>
-          <b>${response.views}</b>
+          <span>${response.views}</span>
         </p>
         <p class="info-item">
           <b>Comments </b>
-          <b>${response.comments}</b>
+          <span>${response.comments}</span>
         </p>
         <p class="info-item">
           <b>Downloads</b>
-          <b>${response.downloads}</b>
+          <span>${response.downloads}</span>
         </p>
         </div>
       </div>
       `;
 
     refs.gallery.insertAdjacentHTML('beforeend', markup);
-  });
+  }).join('');
   // console.log(data)
 }

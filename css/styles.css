@@ -1,3 +1,15 @@
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: blue;
+  height: 40px;
+}
+
+nav input {
+  border-radius: 5px;
+}
+
 .gallery {
   display: flex;
   flex-wrap: wrap;
@@ -23,11 +35,18 @@
   display: block;
 }
 
-.info-item b {
+.info-item b, .info-item span {
   display: flex;
   justify-content: center;
 }
 
+
+.load-more {
+  display: block;
+  margin: 0 auto;
+}
+
 .hidden {
   display: none;
+  margin: 0 auto;
 }
