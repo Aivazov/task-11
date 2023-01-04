@@ -23,7 +23,7 @@ refs.searchForm.addEventListener('submit', (e) => {
   inputValue = refs.searchInpt.value;
 
   // console.log('inputValue', inputValue);
-  // 
+  //
   fetchPictures(refs.searchInpt.value);
   galleryLightBox.open();
 
@@ -35,6 +35,8 @@ refs.loadMoreBtn.addEventListener('click', (e) => {
   PAGE += 1;
   fetchPictures(inputValue);
 });
+
+refs.gallery.addEventListener('click', onImageClick);
 
 function fetchPictures(data) {
   return fetch(
@@ -53,10 +55,11 @@ function fetchPictures(data) {
 }
 
 function renderImages(data) {
-  data.hits.map((response) => {
-    // console.log(response);
+  data.hits
+    .map((response) => {
+      // console.log(response);
 
-    const markup = `
+      const markup = `
       <div class="photo-card">
       <a href="${response.largeImageURL}">
         <img src="${response.webformatURL}" alt="" loading="lazy" />
@@ -82,7 +85,26 @@ function renderImages(data) {
       </div>
       `;
 
-    refs.gallery.insertAdjacentHTML('beforeend', markup);
-  }).join('');
+      refs.gallery.insertAdjacentHTML('beforeend', markup);
+    })
+    .join('');
   // console.log(data)
+}
+
+function onImageClick(e) {
+  e.preventDefault();
+  // console.log(e.target.dataset.source);
+  if (e.target.nodeName !== 'IMG') {
+    return;
+  }
+
+  const instance = basicLightbox.create(`
+    <img src="${e.target.dataset.source}" width="800" height="600">
+`);
+
+  instance.show();
+
+  refs.gallery.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape') instance.close();
+  });
 }
