@@ -5,8 +5,8 @@ const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '31522217-1daa00f4dac69c1e930d1cd07';
 let PAGE = 1;
 let inputValue = '';
-let galleryArray = [];
 let arr;
+let galleryLightBox = new SimpleLightbox('.gallery a');
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -27,10 +27,17 @@ refs.searchForm.addEventListener('submit', (e) => {
     return Notiflix.Notify.info('Please enter a search request');
   }
 
-  // console.log('inputValue', inputValue);
-  //
-  fetchPictures(refs.searchInpt.value);
-  // galleryLightBox.open();
+  fetchPictures(inputValue).then((data) => {
+    renderImages(data);
+    if (data.hits.length > 0) {
+      // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      refs.loadMoreBtn.classList.remove('hidden');
+      galleryLightBox.options.captionsData = 'alt';
+      galleryLightBox.options.captionDelay = 250;
+      galleryLightBox.on('show.simplelightbox');
+    }
+  });
+  // galleryLightBox.refresh();
 
   refs.searchInpt.value = '';
   refs.gallery.innerHTML = '';
@@ -38,36 +45,41 @@ refs.searchForm.addEventListener('submit', (e) => {
 
 refs.loadMoreBtn.addEventListener('click', (e) => {
   PAGE += 1;
-  fetchPictures(inputValue);
+  fetchPictures(inputValue)
+    .then((res) => {
+      renderImages(res);
+      // let galleryLightBox = new SimpleLightbox('.gallery a');
+      galleryLightBox.refresh('show.simplelightbox');
+    })
+    .catch((e) =>
+      Notiflix.Notify.failure('Something went wrong. Please try again')
+    );
+  // let galleryLightBox = new SimpleLightbox('.gallery a');
+  // galleryLightBox.refresh('show.simplelightbox');
 });
 
 // refs.gallery.addEventListener('click', onImageClick);
 
 function fetchPictures(data) {
-  return (
-    fetch(
-      `${BASE_URL}?key=${API_KEY}&q=${data}&image_type=photo&orientation=horizontal&safesearch=true&per_page=8&page=${PAGE}`
-    )
-      .then((data) => data.json())
-      .then((data) => {
-        renderImages(data);
-        arr = data;
-        console.log(arr);
-        if (data.hits.length > 0) {
-          // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-          refs.loadMoreBtn.classList.remove('hidden');
-        }
-      })
-      // .then(data => {
-      // data.hits.length === 0 ? Notiflix.Notify.failure(
-      // "The search was unsuccessful." : Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-      // })
-      .catch((e) =>
-        Notiflix.Notify.failure(
-          "We're sorry, but you've reached the end of search results."
-        )
-      )
-  );
+  return fetch(
+    `${BASE_URL}?key=${API_KEY}&q=${data}&image_type=photo&orientation=horizontal&safesearch=true&per_page=8&page=${PAGE}`
+  ).then((data) => data.json());
+  // .then((data) => {
+  //   renderImages(data);
+  //   if (data.hits.length > 0) {
+  //     // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+  //     refs.loadMoreBtn.classList.remove('hidden');
+  //     if (!galleryLightBox) {
+  //       let galleryLightBox = new SimpleLightbox('.gallery a');
+  //       galleryLightBox.options.captionsData = 'alt';
+  //       galleryLightBox.options.captionDelay = 250;
+  //       galleryLightBox.on('show.simplelightbox');
+  //     }
+  //   }
+  // })
+  // .catch((e) =>
+  //   Notiflix.Notify.failure('Something went wrong. Please try again')
+  // );
 }
 
 function renderImages(data) {
@@ -81,8 +93,6 @@ function renderImages(data) {
 
   data.hits
     .map((response) => {
-      // console.log(response);
-
       const markup = `
         <a href="${response.largeImageURL}" class="photo-card">
           <img src="${response.webformatURL}" alt="${response.tags}" loading="lazy" />
@@ -112,34 +122,13 @@ function renderImages(data) {
       refs.gallery.insertAdjacentHTML('beforeend', markup);
     })
     .join('');
-
-  let galleryLightBox = new SimpleLightbox('.gallery a');
-  galleryLightBox.options.captionsData = 'alt';
-  galleryLightBox.options.captionDelay = 250;
-  galleryLightBox.on('show.simplelightbox');
 }
 
 function onImageClick(e) {
   e.preventDefault();
-  // console.log(e.target.dataset.source);
   if (e.target.nodeName !== 'IMG') {
     return;
   }
-
-  // galleryLightBox.options.captionsData = 'alt';
-  // galleryLightBox.options.captionDelay = 250;
-  // galleryLightBox.on('show.simplelightbox');
-
-  //   const instance = basicLightbox.create(`
-  //     <div class="photo-card">
-  //       <a href="${arr.hits.largeImageURL}">
-  //         <img src="${e.target.dataset.source}" width="800" height="600">
-  //       </a>
-  //       <p style="background-color: white">Howdy. This is an image</p>
-  //     </div>
-  // `);
-
-  //   instance.show();
 
   refs.gallery.addEventListener('keydown', (e) => {
     if (e.code === 'Escape') instance.close();
