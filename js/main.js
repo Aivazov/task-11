@@ -5,7 +5,6 @@ const BASE_URL = 'https://pixabay.com/api/';
 const API_KEY = '31522217-1daa00f4dac69c1e930d1cd07';
 let PAGE = 1;
 let inputValue = '';
-let galleryLightBox = new SimpleLightbox('.gallery a');
 let galleryArray = [];
 let arr;
 
@@ -52,11 +51,11 @@ function fetchPictures(data) {
       .then((data) => data.json())
       .then((data) => {
         renderImages(data);
-        refs.loadMoreBtn.classList.remove('hidden');
         arr = data;
         console.log(arr);
-        if (data > 0) {
-          Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        if (data.hits.length > 0) {
+          // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+          refs.loadMoreBtn.classList.remove('hidden');
         }
       })
       // .then(data => {
@@ -72,7 +71,7 @@ function fetchPictures(data) {
 }
 
 function renderImages(data) {
-  if (!data.hits.length) {
+  if (!data.hits.length || data.hits.length === 0) {
     refs.loadMoreBtn.classList.add('hidden');
 
     return Notiflix.Notify.failure(
@@ -87,8 +86,8 @@ function renderImages(data) {
       const markup = `
         <a href="${response.largeImageURL}" class="photo-card">
           <img src="${response.webformatURL}" alt="${response.tags}" loading="lazy" />
-          <div class="photo-card">
-            <div class="info">
+          <div class="">
+            <div class="info mt-2">
               <p class="info-item">
                 <b>Likes</b>
                 <span>${response.likes}</span>
@@ -113,7 +112,8 @@ function renderImages(data) {
       refs.gallery.insertAdjacentHTML('beforeend', markup);
     })
     .join('');
-  // console.log(data)
+
+  let galleryLightBox = new SimpleLightbox('.gallery a');
   galleryLightBox.options.captionsData = 'alt';
   galleryLightBox.options.captionDelay = 250;
   galleryLightBox.on('show.simplelightbox');
