@@ -45,6 +45,10 @@ function fetchPictures(data) {
     .then((data) => data.json())
     .then((data) => {
       renderImages(data);
+      // if (data.hits.length === 0) {
+      //   Notiflix.Notify.failure(
+      //   "The search was unsuccessful."
+      // };
       Notiflix.Notify.success('Hooray! We found totalHits images.');
     })
     .catch((e) =>
