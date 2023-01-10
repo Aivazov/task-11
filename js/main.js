@@ -52,8 +52,8 @@ refs.loadMoreBtn.addEventListener('click', (e) => {
   fetchPictures(inputValue)
     .then((res) => {
       renderImages(res);
-      let galleryLightBox = new SimpleLightbox('.gallery a');
-      galleryLightBox.on('show.simplelightbox');
+      // let galleryLightBox = new SimpleLightbox('.gallery a');
+      galleryLightBox.refresh('show.simplelightbox');
     })
     .catch((e) =>
       Notiflix.Notify.failure('Something went wrong. Please try again')
@@ -88,11 +88,11 @@ function fetchPictures(data) {
 
 function renderImages(data) {
   if (!data.hits.length || data.hits.length === 0) {
-    refs.loadMoreBtn.classList.add('hidden');
-
-    return Notiflix.Notify.failure(
+    Notiflix.Notify.failure(
       'Sorry, the search request was unsuccessful. Please try again'
     );
+    refs.loadMoreBtn.classList.add('hidden');
+    return;
   }
 
   data.hits
