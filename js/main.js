@@ -27,16 +27,20 @@ refs.searchForm.addEventListener('submit', (e) => {
     return Notiflix.Notify.info('Please enter a search request');
   }
 
-  fetchPictures(inputValue).then((data) => {
-    renderImages(data);
-    if (data.hits.length > 0) {
+  fetchPictures(inputValue)
+    .then((data) => {
+      renderImages(data);
+      // if (data.hits.length > 0) {
       // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
       refs.loadMoreBtn.classList.remove('hidden');
       galleryLightBox.options.captionsData = 'alt';
       galleryLightBox.options.captionDelay = 250;
-      galleryLightBox.on('show.simplelightbox');
-    }
-  });
+      galleryLightBox.refresh('show.simplelightbox');
+      // }
+    })
+    .catch((e) =>
+      Notiflix.Notify.failure('Something went wrong. Please try again')
+    );
   // galleryLightBox.refresh();
 
   refs.searchInpt.value = '';
@@ -48,8 +52,8 @@ refs.loadMoreBtn.addEventListener('click', (e) => {
   fetchPictures(inputValue)
     .then((res) => {
       renderImages(res);
-      // let galleryLightBox = new SimpleLightbox('.gallery a');
-      galleryLightBox.refresh('show.simplelightbox');
+      let galleryLightBox = new SimpleLightbox('.gallery a');
+      galleryLightBox.on('show.simplelightbox');
     })
     .catch((e) =>
       Notiflix.Notify.failure('Something went wrong. Please try again')
