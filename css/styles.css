@@ -6,6 +6,12 @@ nav {
   height: 60px;
 }
 
+nav form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 nav input {
   border-radius: 5px;
   padding-left: 10px;
@@ -13,6 +19,7 @@ nav input {
   padding-top: 6px;
   outline: none;
   border-style: none;
+  /* margin-top: 2px; */
 }
 
 a {
@@ -62,5 +69,6 @@ a {
 }
 
 .submit-btn {
-  margin-bottom: 3px;
+  margin-left: 10px;
+  height: 36px;
 }

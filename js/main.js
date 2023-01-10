@@ -16,8 +16,6 @@ const refs = {
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
-// console.log(refs);
-
 refs.searchForm.addEventListener('submit', (e) => {
   e.preventDefault();
   PAGE = 1;
@@ -30,13 +28,13 @@ refs.searchForm.addEventListener('submit', (e) => {
   fetchPictures(inputValue)
     .then((data) => {
       renderImages(data);
-      // if (data.hits.length > 0) {
-      // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-      refs.loadMoreBtn.classList.remove('hidden');
-      galleryLightBox.options.captionsData = 'alt';
-      galleryLightBox.options.captionDelay = 250;
-      galleryLightBox.refresh('show.simplelightbox');
-      // }
+      if (data.hits.length > 0) {
+        // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        refs.loadMoreBtn.classList.remove('hidden');
+        galleryLightBox.options.captionsData = 'alt';
+        galleryLightBox.options.captionDelay = 250;
+        galleryLightBox.refresh('show.simplelightbox');
+      }
     })
     .catch((e) =>
       Notiflix.Notify.failure('Something went wrong. Please try again')
@@ -52,17 +50,12 @@ refs.loadMoreBtn.addEventListener('click', (e) => {
   fetchPictures(inputValue)
     .then((res) => {
       renderImages(res);
-      // let galleryLightBox = new SimpleLightbox('.gallery a');
       galleryLightBox.refresh('show.simplelightbox');
     })
     .catch((e) =>
       Notiflix.Notify.failure('Something went wrong. Please try again')
     );
-  // let galleryLightBox = new SimpleLightbox('.gallery a');
-  // galleryLightBox.refresh('show.simplelightbox');
 });
-
-// refs.gallery.addEventListener('click', onImageClick);
 
 function fetchPictures(data) {
   return fetch(
@@ -88,9 +81,7 @@ function fetchPictures(data) {
 
 function renderImages(data) {
   if (!data.hits.length || data.hits.length === 0) {
-    Notiflix.Notify.failure(
-      'Sorry, the search request was unsuccessful. Please try again'
-    );
+    Notiflix.Notify.failure('Unappropriate search request. Please try again');
     refs.loadMoreBtn.classList.add('hidden');
     return;
   }
